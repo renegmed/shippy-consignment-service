@@ -14,7 +14,6 @@ import (
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/server"
-	k8s "github.com/micro/kubernetes/go/micro"
 	pb "github.com/renegmed/shippy-consignment-service/proto/consignment"
 	userService "github.com/renegmed/shippy-user-service/proto/auth"
 	vesselProto "github.com/renegmed/shippy-vessel-service/proto/vessel"
@@ -51,15 +50,20 @@ func main() {
 	}
 
 	// Create a new service. Optionally include some options here.
-	srv = k8s.NewService(
+	// srv = k8s.NewService(
 
-		// This name must match the package name given in your protobuf definition
-		micro.Name("shippy.consignment"),
+	// 	// This name must match the package name given in your protobuf definition
+	// 	micro.Name("consignment"),
+	// 	micro.Version("latest"),
+	// 	micro.WrapHandler(AuthWrapper),
+	// )
+	srv := micro.NewService(
+		// This name must match the package name given in  your protobuf definition
+		micro.Name("consignment"),
 		micro.Version("latest"),
 		micro.WrapHandler(AuthWrapper),
 	)
-
-	vesselClient := vesselProto.NewVesselServiceClient("shippy.vessel", srv.Client())
+	vesselClient := vesselProto.NewVesselServiceClient("vessel", srv.Client())
 
 	// Init will parse the command line flags.
 	srv.Init()
